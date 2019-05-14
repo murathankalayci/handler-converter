@@ -1,8 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 public class Main {
     static ArrayList<Organization> orgs = new ArrayList<>();
@@ -12,6 +12,7 @@ public class Main {
         loadNodes();
         loadDeps();
         populate();
+        printCSV();
     }
 
     private static void loadOrganizations() {
@@ -83,10 +84,33 @@ public class Main {
         return null;
     }
 
-    private static void populate(){
+    private static void populate() {
         for (int i = 0; i < orgs.size(); i++) {
             orgs.get(i).populateMap();
         }
+    }
+
+    private static void printCSV() {
+        try {
+            PrintStream out = new PrintStream(new FileOutputStream(
+                    "CSVDepMaps.txt"));
+            for (int i = 0; i < orgs.size(); i++) {
+                Set set = orgs.get(i).getDepMap().entrySet();
+                Iterator iterator = set.iterator();
+                while(iterator.hasNext()) {
+                    Map.Entry mentry = (Map.Entry)iterator.next();
+                    out.println(orgs.get(i).getName()+" "+ ((Organization) mentry.getKey()).getName()+ " "+ mentry.getValue());
+                }
+
+            }
+
+
+            out.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 
