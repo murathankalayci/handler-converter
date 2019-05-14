@@ -10,14 +10,8 @@ public class Main {
     public static void main(String[] args) {
         loadOrganizations();
         loadNodes();
-        for (int i = 0; i < orgs.size(); i++) {
-            System.out.println(orgs.get(i).getName());
-            System.out.println("--------------------");
-            for(int j = 0; j< orgs.get(i).getNodes().size(); j++){
-                System.out.println(orgs.get(i).getNodes().get(j).getName());
-            }
-            System.out.println();
-        }
+        loadDeps();
+        populate();
     }
 
     private static void loadOrganizations() {
@@ -53,6 +47,7 @@ public class Main {
             e.getStackTrace();
         }
     }
+
     private static void loadDeps() {
         try {
             File file = new File("depends.rsf");
@@ -61,9 +56,9 @@ public class Main {
                 String str = s.nextLine();
                 StringTokenizer tokenizer = new StringTokenizer(str);
                 tokenizer.nextToken();
-                String firstNode = tokenizer.nextToken();
-                String secondNode = tokenizer.nextToken();
-                findOrganization(orgName).getNodes().add(node);
+                String firstNodeName = tokenizer.nextToken();
+                String secondNodeName = tokenizer.nextToken();
+                findNode(firstNodeName).getParent().getDeps().add(findNode(secondNodeName).getParent());
             }
         } catch (FileNotFoundException e) {
             e.getStackTrace();
@@ -73,9 +68,25 @@ public class Main {
     private static Organization findOrganization(String name) {
         for (int i = 0; i < orgs.size(); i++) {
             Organization tmp = orgs.get(i);
-            if(tmp.getName().equals(name))return tmp;
+            if (tmp.getName().equals(name)) return tmp;
         }
         return null;
+    }
+
+    private static Node findNode(String nodeName) {
+        for (int i = 0; i < orgs.size(); i++) {
+            Organization tmp = orgs.get(i);
+            for (int j = 0; j < tmp.getNodes().size(); j++) {
+                if (tmp.getNodes().get(j).getName().equals(nodeName)) return tmp.getNodes().get(j);
+            }
+        }
+        return null;
+    }
+
+    private static void populate(){
+        for (int i = 0; i < orgs.size(); i++) {
+            orgs.get(i).populateMap();
+        }
     }
 }
 
