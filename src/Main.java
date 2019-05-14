@@ -47,6 +47,23 @@ public class Main {
                 String orgName = tokenizer.nextToken();
                 Node node = new Node(tokenizer.nextToken());
                 findOrganization(orgName).getNodes().add(node);
+                node.setParent(findOrganization(orgName));
+            }
+        } catch (FileNotFoundException e) {
+            e.getStackTrace();
+        }
+    }
+    private static void loadDeps() {
+        try {
+            File file = new File("depends.rsf");
+            Scanner s = new Scanner(file);
+            while (s.hasNextLine()) {
+                String str = s.nextLine();
+                StringTokenizer tokenizer = new StringTokenizer(str);
+                tokenizer.nextToken();
+                String firstNode = tokenizer.nextToken();
+                String secondNode = tokenizer.nextToken();
+                findOrganization(orgName).getNodes().add(node);
             }
         } catch (FileNotFoundException e) {
             e.getStackTrace();
